@@ -8,3 +8,16 @@
 /dataSources.local.xml
 # Editor-based HTTP Client requests
 /httpRequests/
+
+# IntelliJ IDEA
+.idea/
+
+# Compiled files
+out/
+*.class
+
+# Log files
+*.log
+
+# Temporary files
+*.tmp
