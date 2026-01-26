@@ -1,86 +1,93 @@
 import java.util.Scanner;
-import java.util.List;
 
 public class Main {
     public static void main(String[] args) {
         Scanner scanner = new Scanner(System.in);
+
         TransportManager manager = new TransportManager();
+        TransportService service = new TransportService(manager);
 
-        manager.addVehicle(new Bus("777SSS", 84, 100, 55, "Test One", "On road"));
-        manager.addVehicle(new Bus("999AAA", 12, 60, 10, "Test Two", "Garage"));
+        boolean running = true;
 
-        System.out.println("Welcome to Transport Management System");
+        while (running) {
+            System.out.println("\n--- Transport Management System ---");
+            System.out.println("1. Add New Bus (Create)");
+            System.out.println("2. Show All Buses (Read)");
+            System.out.println("3. Search Bus by Plate");
+            System.out.println("4. Update Bus Status (Update)");
+            System.out.println("5. Delete a Bus (Delete)");
+            System.out.println("6. Board a Passenger");
+            System.out.println("7. Sort Buses by Plate");
+            System.out.println("0. Exit");
+            System.out.print("Select an option: ");
 
-        while (true) {
-            System.out.println("\n--- Menu ---");
-            System.out.println("1. Add a Bus");
-            System.out.println("2. Show all Vehicles");
-            System.out.println("3. Sort by Plate Number");
-            System.out.println("4. Sort by Capacity");
-            System.out.println("5. Search by Plate");
-            System.out.println("6. Filter by Status");
-            System.out.println("7. Exit");
-            System.out.print("Enter choice: ");
+            int choice = -1;
+            try {
+                choice = Integer.parseInt(scanner.nextLine());
+            } catch (NumberFormatException e) {
+                System.out.println("Invalid input. Please enter a number.");
+                continue;
+            }
 
-            int choice = scanner.nextInt();
-            scanner.nextLine();
+            switch (choice) {
+                case 1:
+                    System.out.print("Enter Plate Number: "); String plate = scanner.nextLine();
+                    System.out.print("Enter Driver Name: "); String driver = scanner.nextLine();
+                    System.out.print("Enter Status: "); String status = scanner.nextLine();
+                    System.out.print("Enter Route Number: "); int route = Integer.parseInt(scanner.nextLine());
+                    System.out.print("Enter Capacity: "); int cap = Integer.parseInt(scanner.nextLine());
+                    System.out.print("Enter Current Occupancy: "); int occ = Integer.parseInt(scanner.nextLine());
+                    Bus newBus = new Bus(plate, driver, status, route, cap, occ);
+                    manager.addBus(newBus);
+                    break;
 
-            if (choice == 1) {
-                System.out.print("Enter Plate Number: ");
-                String plate = scanner.nextLine();
-                System.out.print("Enter Route ID: ");
-                int route = scanner.nextInt();
-                System.out.print("Enter Capacity: ");
-                int cap = scanner.nextInt();
-                System.out.print("Enter Occupancy: ");
-                int occ = scanner.nextInt();
-                scanner.nextLine();
-                System.out.print("Enter Driver Name: ");
-                String driver = scanner.nextLine();
-                System.out.print("Enter Status: ");
-                String status = scanner.nextLine();
+                case 2:
+                    manager.displayAllBuses();
+                    break;
 
-                Vehicle newBus = new Bus(plate, route, cap, occ, driver, status);
-                manager.addVehicle(newBus);
-                System.out.println("Bus added successfully.");
+                case 3:
+                    System.out.print("Enter Plate Number: "); String searchPlate = scanner.nextLine();
+                    Bus foundBus = manager.searchByPlate(searchPlate);
+                    if (foundBus != null) {
+                        foundBus.showInfo();
+                    } else {
+                        System.out.println("Bus not found.");
+                    }
+                    break;
 
-            } else if (choice == 2) {
-                manager.printFleet();
+                case 4:
+                    System.out.print("Enter Plate to Update: "); String upPlate = scanner.nextLine();
+                    System.out.print("Enter New Status: "); String newStat = scanner.nextLine();
+                    System.out.print("Enter New Occupancy: "); int newOcc = Integer.parseInt(scanner.nextLine());
+                    manager.updateBusStatus(upPlate, newStat, newOcc);
+                    break;
 
-            } else if (choice == 3) {
-                manager.sortVehiclesByPlate();
-                System.out.println("Sorted by Plate Number:");
-                manager.printFleet();
+                case 5:
+                    System.out.print("Enter Plate to Delete: "); String delPlate = scanner.nextLine();
+                    manager.removeBus(delPlate);
+                    break;
 
-            } else if (choice == 4) {
-                manager.sortVehiclesByCapacity();
-                System.out.println("Sorted by Capacity:");
-                manager.printFleet();
+                case 6:
+                    System.out.print("Enter Bus Plate: "); String bPlate = scanner.nextLine();
+                    System.out.print("Passenger Name: "); String pName = scanner.nextLine();
+                    int autoTicket = (int)(Math.random() * 90000) + 10000;
+                    System.out.println("Generated Ticket Number: " + autoTicket);
+                    Passenger p = new Passenger(pName, autoTicket);
+                    service.boardPassenger(bPlate, new Passenger(pName, autoTicket));
+                    break;
 
-            } else if (choice == 5) {
-                System.out.print("Enter Plate to search: ");
-                String searchPlate = scanner.nextLine();
-                Vehicle found = manager.searchByPlate(searchPlate);
-                if (found != null) {
-                    System.out.println("Found: " + found);
-                } else {
-                    System.out.println("Vehicle not found.");
-                }
+                case 7:
+                    manager.sortBusesByPlate();
+                    manager.displayAllBuses();
+                    break;
 
-            } else if (choice == 6) {
-                System.out.print("Enter Status to filter (e.g., 'On road'): ");
-                String filterStatus = scanner.nextLine();
-                List<Vehicle> filtered = manager.filterByStatus(filterStatus);
-                System.out.println("--- Filtered Results ---");
-                for(Vehicle v : filtered) {
-                    System.out.println(v);
-                }
+                case 0:
+                    running = false;
+                    System.out.println("Exiting system...");
+                    break;
 
-            } else if (choice == 7) {
-                System.out.println("Exiting...");
-                break;
-            } else {
-                System.out.println("Invalid choice. Try again.");
+                default:
+                    System.out.println("Invalid choice. Try again.");
             }
         }
         scanner.close();

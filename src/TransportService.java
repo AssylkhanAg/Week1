@@ -1,61 +1,58 @@
-import java.util.Objects;
+import java.sql.SQLException;
 
 public class TransportService {
-    private int route_id;
-    private String busPlateNumber;
-    private int ticket_cost;
+    private TransportManager manager;
+    private BusDAO busDAO;
 
-    public TransportService(int route_id, String busPlateNumber, int ticket_cost) {
-        this.route_id = route_id;
-        this.busPlateNumber = busPlateNumber;
-        this.ticket_cost = ticket_cost;
+    public TransportService(TransportManager manager) {
+        this.manager = manager;
+        this.busDAO = new BusDAO();
     }
 
-    public int getRoute_id() {
-        return route_id;
+    public void boardPassenger(String plate_num, Passenger passenger) {
+        Bus bus = manager.searchByPlate(plate_num);
+
+        if (bus == null) {
+            System.out.println("Error: Bus with plate " + plate_num + " not found.");
+            return;
+        }
+
+        if (bus.getOccupancy() < bus.getCapacity()) {
+            bus.addPassenger(passenger);
+
+            try {
+                busDAO.updateBus(bus);
+                System.out.println("Success: Passenger " + passenger.getName() + " boarded.");
+            } catch (SQLException e) {
+                System.out.println("Database sync failed: " + e.getMessage());
+            }
+        } else {
+            System.out.println("Boarding failed: Bus " + plate_num + " is full.");
+        }
     }
 
-    public void setRoute_id(int route_id) {
-        this.route_id = route_id;
+    public void changeBusStatus(String plate_num, String newStatus) {
+        Bus bus = manager.searchByPlate(plate_num);
+
+        if (bus != null) {
+            bus.setStatus(newStatus);
+            try {
+                busDAO.updateBus(bus);
+                System.out.println("Status updated to: " + newStatus);
+            } catch (SQLException e) {
+                System.out.println("DB Update failed: " + e.getMessage());
+            }
+        } else {
+            System.out.println("Bus not found.");
+        }
     }
 
-    public String getBusPlateNumber() {
-        return busPlateNumber;
-    }
-
-    public void setBusPlateNumber(String busPlateNumber) {
-        this.busPlateNumber = busPlateNumber;
-    }
-
-    public int getTicket_cost() {
-        return ticket_cost;
-    }
-
-    public void setTicket_cost(int ticket_cost) {
-        this.ticket_cost = ticket_cost;
-    }
-
-    @Override
-    public String toString() {
-        return "TransportService{" +
-                "route_id=" + route_id +
-                ", busPlateNumber='" + busPlateNumber + '\'' +
-                ", ticket_cost=" + ticket_cost +
-                '}';
-    }
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        TransportService that = (TransportService) o;
-        return route_id == that.route_id &&
-                ticket_cost == that.ticket_cost &&
-                Objects.equals(busPlateNumber, that.busPlateNumber);
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(route_id, busPlateNumber, ticket_cost);
+    public void printBusReport(String plate_num) {
+        Bus bus = manager.searchByPlate(plate_num);
+        if (bus != null) {
+            bus.showInfo();
+        } else {
+            System.out.println("No record for bus: " + plate_num);
+        }
     }
 }

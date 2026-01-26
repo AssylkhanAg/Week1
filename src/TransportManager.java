@@ -1,61 +1,85 @@
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Comparator;
 import java.util.List;
 
 public class TransportManager {
-
-    private List<Vehicle> fleet;
+    private List<Bus> buses;
+    private BusDAO busDAO;
 
     public TransportManager() {
-        this.fleet = new ArrayList<>();
+        this.buses = new ArrayList<>();
+        this.busDAO = new BusDAO();
+        loadBusesFromDatabase();
     }
 
-    public void addVehicle(Vehicle v) {
-        fleet.add(v);
-    }
-
-    public void printFleet() {
-        if (fleet.isEmpty()) {
-            System.out.println("No vehicles in the pool.");
-        } else {
-            for (Vehicle v : fleet) {
-                System.out.println(v);
-            }
+    private void loadBusesFromDatabase() {
+        try {
+            this.buses = busDAO.getAllBuses();
+        } catch (SQLException e) {
+            System.out.println("Error loading buses: " + e.getMessage());
         }
     }
 
-    public void sortVehiclesByPlate() {
-        Collections.sort(fleet);
+    public void addBus(Bus bus) {
+        try {
+            busDAO.insertBus(bus);
+            buses.add(bus);
+            System.out.println("Bus added successfully.");
+        } catch (SQLException e) {
+            System.out.println("Error adding bus to DB: " + e.getMessage());
+        }
     }
 
-    public void sortVehiclesByCapacity() {
-        Collections.sort(fleet, new Comparator<Vehicle>() {
-            @Override
-            public int compare(Vehicle v1, Vehicle v2) {
-                int cap1 = (v1 instanceof Bus) ? ((Bus) v1).getCapacity() : 0;
-                int cap2 = (v2 instanceof Bus) ? ((Bus) v2).getCapacity() : 0;
-                return Integer.compare(cap1, cap2);
+    public void removeBus(String plate_num) {
+        try {
+            busDAO.deleteBus(plate_num); // Remove from DB
+            buses.removeIf(b -> b.getPlate_num().equals(plate_num)); // Remove from local list
+            System.out.println("Bus removed successfully.");
+        } catch (SQLException e) {
+            System.out.println("Error removing bus: " + e.getMessage());
+        }
+    }
+
+    public void updateBusStatus(String plate_num, String newStatus, int newOccupancy) {
+        try {
+            Bus bus = searchByPlate(plate_num);
+            if (bus != null) {
+                bus.setStatus(newStatus);
+                bus.setOccupancy(newOccupancy);
+                busDAO.updateBus(bus);
+                System.out.println("Bus updated successfully.");
+            } else {
+                System.out.println("Bus not found.");
             }
-        });
+        } catch (SQLException e) {
+            System.out.println("Error updating bus: " + e.getMessage());
+        }
     }
 
-    public Vehicle searchByPlate(String plate) {
-        for (Vehicle v : fleet) {
-            if (v.getPlate_num().equalsIgnoreCase(plate)) {
-                return v;
+
+    public Bus searchByPlate(String plate_num) {
+        for (Bus b : buses) {
+            if (b.getPlate_num().equalsIgnoreCase(plate_num)) {
+                return b;
             }
         }
         return null;
     }
 
-    public List<Vehicle> filterByStatus(String status) {
-        List<Vehicle> filteredList = new ArrayList<>();
-        for (Vehicle v : fleet) {
-            if (v.getStatus().equalsIgnoreCase(status)) {
-                filteredList.add(v);
+    public void sortBusesByPlate() {
+        Collections.sort(buses);
+        System.out.println("Buses sorted by plate number.");
+    }
+
+    public void displayAllBuses() {
+        if (buses.isEmpty()) {
+            System.out.println("No buses in the system.");
+        } else {
+            System.out.println("\n--- Current Bus List ---");
+            for (Bus b : buses) {
+                System.out.println(b);
             }
         }
-        return filteredList;
     }
 }
