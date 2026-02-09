@@ -27,9 +27,12 @@ public class TransportManager {
             buses.add(bus);
             System.out.println("Bus added successfully.");
         } catch (SQLException e) {
+            // Log the exception details to help diagnose the issue
+            e.printStackTrace();
             System.out.println("Error adding bus to DB: " + e.getMessage());
         }
     }
+
 
     public void removeBus(String plate_num) {
         try {
@@ -56,7 +59,6 @@ public class TransportManager {
             System.out.println("Error updating bus: " + e.getMessage());
         }
     }
-
 
     public Bus searchByPlate(String plate_num) {
         for (Bus b : buses) {

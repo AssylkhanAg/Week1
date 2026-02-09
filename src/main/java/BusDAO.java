@@ -4,22 +4,27 @@ import java.util.List;
 
 public class BusDAO {
 
-    public void insertBus(Bus bus) throws SQLException {
-        String query = "INSERT INTO bus (plate_num, driver, status, route, capacity, occupancy) VALUES (?, ?, ?, ?, ?, ?)";
-        try (Connection conn = DatabaseConnection.connect();
-             PreparedStatement pstmt = conn.prepareStatement(query)) {
+    public boolean insertBus(Bus bus) throws SQLException {
+        Connection conn = DatabaseConnection.connect();
+        String sql = "INSERT INTO bus (route, capacity, occupancy, plate_num, driver, status) VALUES (?, ?, ?, ?, ?, ?)";
 
-            pstmt.setString(1, bus.getPlate_num());
-            pstmt.setString(2, bus.getDriver());
-            pstmt.setString(3, bus.getStatus());
-            pstmt.setInt(4, bus.getRoute());
-            pstmt.setInt(5, bus.getCapacity());
-            pstmt.setInt(6, bus.getOccupancy());
+        try (PreparedStatement stmt = conn.prepareStatement(sql)) {
+            stmt.setInt(1, bus.getRoute());
+            stmt.setInt(2, bus.getCapacity());
+            stmt.setInt(3, bus.getOccupancy());
+            stmt.setString(4, bus.getPlate_num());
+            stmt.setString(5, bus.getDriver());
+            stmt.setString(6, bus.getStatus());
 
-            pstmt.executeUpdate();
-            System.out.println("Bus added to database successfully.");
+            int rowsAffected = stmt.executeUpdate();
+            return rowsAffected > 0; // Return true if a row was inserted
+        } catch (SQLException e) {
+            e.printStackTrace();
+            throw e; // Re-throw the exception to be caught in the controller
         }
     }
+
+
 
     public List<Bus> getAllBuses() throws SQLException {
         List<Bus> buses = new ArrayList<>();
@@ -44,7 +49,7 @@ public class BusDAO {
         return buses;
     }
 
-    public void updateBus(Bus bus) throws SQLException {
+    public boolean updateBus(Bus bus) throws SQLException {
         String query = "UPDATE bus SET driver = ?, status = ?, route = ?, capacity = ?, occupancy = ? WHERE plate_num = ?";
 
         try (Connection conn = DatabaseConnection.connect();
@@ -62,9 +67,10 @@ public class BusDAO {
                 System.out.println("Bus " + bus.getPlate_num() + " updated successfully.");
             }
         }
+        return false;
     }
 
-    public void deleteBus(String plate_num) throws SQLException {
+    public boolean deleteBus(String plate_num) throws SQLException {
         String query = "DELETE FROM bus WHERE plate_num = ?";
 
         try (Connection conn = DatabaseConnection.connect();
@@ -79,6 +85,7 @@ public class BusDAO {
                 System.out.println("No bus found with that plate number.");
             }
         }
+        return false;
     }
 
     public Bus searchByPlate(String plate_num) throws SQLException {

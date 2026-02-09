@@ -1,5 +1,4 @@
 import java.util.Scanner;
-
 public class Main {
     public static void main(String[] args) {
         Scanner scanner = new Scanner(System.in);
@@ -20,7 +19,6 @@ public class Main {
             System.out.println("7. Sort Buses by Plate");
             System.out.println("0. Exit");
             System.out.print("Select an option: ");
-
             int choice = -1;
             try {
                 choice = Integer.parseInt(scanner.nextLine());
