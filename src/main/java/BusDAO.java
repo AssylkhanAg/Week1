@@ -63,11 +63,8 @@ public class BusDAO {
             pstmt.setString(6, bus.getPlate_num());
 
             int rowsAffected = pstmt.executeUpdate();
-            if (rowsAffected > 0) {
-                System.out.println("Bus " + bus.getPlate_num() + " updated successfully.");
-            }
+            return rowsAffected > 0; // Return true if at least one row was updated
         }
-        return false;
     }
 
     public boolean deleteBus(String plate_num) throws SQLException {
@@ -79,13 +76,8 @@ public class BusDAO {
             pstmt.setString(1, plate_num);
             int rowsAffected = pstmt.executeUpdate();
 
-            if (rowsAffected > 0) {
-                System.out.println("Bus " + plate_num + " deleted successfully.");
-            } else {
-                System.out.println("No bus found with that plate number.");
-            }
+            return rowsAffected > 0; // Return true if the bus was deleted
         }
-        return false;
     }
 
     public Bus searchByPlate(String plate_num) throws SQLException {
