@@ -5,10 +5,10 @@ public class Bus extends Vehicle {
     private int route;
     private int capacity;
     private int occupancy;
-    private List<Passenger> passengers; // Kept from your original logic
+    private List<Passenger> passengers;
 
     public Bus(String plate_num, String driver, String status, int route, int capacity, int occupancy) {
-        super(plate_num, driver, status); // Passes info to Vehicle.java
+        super(plate_num, driver, status);
         this.route = route;
         this.capacity = capacity;
         this.occupancy = occupancy;

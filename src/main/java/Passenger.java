@@ -9,6 +9,7 @@ public class Passenger {
         this.ticket_num = ticket_num;
     }
 
+
     public Passenger(int id, String name, int ticket_num, int bus_id) {
         this.id = id;
         this.name = name;

@@ -55,6 +55,7 @@ public abstract class Vehicle implements Comparable<Vehicle> {
         return Objects.equals(plate_num, vehicle.plate_num);
     }
 
+
     @Override
     public int hashCode() {
         return Objects.hash(plate_num);

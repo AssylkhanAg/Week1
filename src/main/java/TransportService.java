@@ -54,5 +54,6 @@ public class TransportService {
         } else {
             System.out.println("No record for bus: " + plate_num);
         }
+
     }
 }

@@ -17,10 +17,10 @@ public class BusDAO {
             stmt.setString(6, bus.getStatus());
 
             int rowsAffected = stmt.executeUpdate();
-            return rowsAffected > 0; // Return true if a row was inserted
+            return rowsAffected > 0;
         } catch (SQLException e) {
             e.printStackTrace();
-            throw e; // Re-throw the exception to be caught in the controller
+            throw e;
         }
     }
 
@@ -63,7 +63,7 @@ public class BusDAO {
             pstmt.setString(6, bus.getPlate_num());
 
             int rowsAffected = pstmt.executeUpdate();
-            return rowsAffected > 0; // Return true if at least one row was updated
+            return rowsAffected > 0;
         }
     }
 
@@ -76,7 +76,7 @@ public class BusDAO {
             pstmt.setString(1, plate_num);
             int rowsAffected = pstmt.executeUpdate();
 
-            return rowsAffected > 0; // Return true if the bus was deleted
+            return rowsAffected > 0;
         }
     }
 

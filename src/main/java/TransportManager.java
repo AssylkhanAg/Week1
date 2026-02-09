@@ -27,7 +27,6 @@ public class TransportManager {
             buses.add(bus);
             System.out.println("Bus added successfully.");
         } catch (SQLException e) {
-            // Log the exception details to help diagnose the issue
             e.printStackTrace();
             System.out.println("Error adding bus to DB: " + e.getMessage());
         }
@@ -36,8 +35,8 @@ public class TransportManager {
 
     public void removeBus(String plate_num) {
         try {
-            busDAO.deleteBus(plate_num); // Remove from DB
-            buses.removeIf(b -> b.getPlate_num().equals(plate_num)); // Remove from local list
+            busDAO.deleteBus(plate_num);
+            buses.removeIf(b -> b.getPlate_num().equals(plate_num));
             System.out.println("Bus removed successfully.");
         } catch (SQLException e) {
             System.out.println("Error removing bus: " + e.getMessage());
